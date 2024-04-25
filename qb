@@ -1,0 +1,409 @@
+Q1) 10 nodes topology
+# Create a new simulation object
+set ns [new Simulator]
+
+# Create nodes
+set i 0
+while {$i < 10} {
+    set node($i) [$ns node]
+    incr i
+}
+
+# Set up routing
+$ns rtproto Static
+
+# Define link characteristics
+set i 0
+while {$i < 9} {
+    $ns duplex-link-op $node($i) $node([expr {$i+1}]) 10Mb 10ms DropTail
+    incr i
+}
+
+# Schedule events for node movement
+set i 0
+while {$i < 10} {
+    $ns at [expr {$i * 0.1}] "$node($i) setdest [expr {20.0 + ($i * 10.0)}] [expr {30.0 + ($i * 10.0)}] 10.0"
+    incr i
+}
+
+# Define termination time
+$ns at 120.0 "finish"
+
+# Run simulation
+proc finish {} {
+    global ns
+    $ns halt
+    $ns namtrace-all-wireless out.nam
+    exec nam out.nam &
+    exit 0
+}
+
+$ns run
+---------------------------------------------------------------
+Q2) network commands
+
+# Execute ifconfig command
+exec ifconfig
+
+# Execute traceroute command
+exec traceroute google.com
+
+# Execute tracepath command
+exec tracepath google.com
+
+# Execute nslookup command
+exec nslookup google.com
+
+# Execute dig command
+exec dig google.com
+-------------------------------------------------------------------
+Q3)Reverse an Integer (Java)
+
+public class ReverseInteger {
+    public static int reverse(int x) {
+        long reversed = 0;
+        while (x != 0) {
+            reversed = reversed * 10 + x % 10;
+            x /= 10;
+        }
+        if (reversed < Integer.MIN_VALUE || reversed > Integer.MAX_VALUE) {
+            return 0;
+        }
+        return (int) reversed;
+    }
+
+    public static void main(String[] args) {
+        int num = 12345;
+        System.out.println("Original number: " + num);
+        System.out.println("Reversed number: " + reverse(num));
+    }
+}
+
+---------------------------------------------------------------------
+Q4)Question 4: Distance Vector Routing (TCL)
+
+# Create a new simulation object
+set ns [new Simulator]
+
+# Create nodes
+set i 0
+while {$i < 10} {
+    set node($i) [$ns node]
+    $node($i) random-motion 0
+    incr i
+}
+
+# Set up routing
+$ns rtproto DV
+
+# Define link characteristics
+set i 0
+while {$i < 9} {
+    $ns duplex-link $node($i) $node([expr {$i+1}]) 10Mb 10ms DropTail
+    incr i
+}
+
+# Schedule events for node movement
+set i 0
+while {$i < 10} {
+    $ns at [expr {$i * 0.1}] "$node($i) setdest [expr {20.0 + ($i * 10.0)}] [expr {30.0 + ($i * 10.0)}] 10.0"
+    incr i
+}
+
+# Define termination time
+$ns at 120.0 "finish"
+
+# Run simulation
+proc finish {} {
+    global ns
+    $ns halt
+    $ns namtrace-all-wireless out.nam
+    exec nam out.nam &
+    exit 0
+}
+
+$ns run
+--------------------------------------------------------------------------
+Q5)Question 5: Palindrome Check using TCP Socket (Java)
+
+import java.io.*;
+import java.net.*;
+
+public class PalindromeCheckServer {
+    public static void main(String[] args) throws IOException {
+        ServerSocket serverSocket = new ServerSocket(9999);
+        System.out.println("Server started. Waiting for client...");
+
+        while (true) {
+            Socket clientSocket = serverSocket.accept();
+            System.out.println("Client connected.");
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+
+            String str = in.readLine();
+            boolean isPalindrome = checkPalindrome(str);
+
+            out.println(isPalindrome);
+
+            clientSocket.close();
+        }
+    }
+
+    private static boolean checkPalindrome(String str) {
+        StringBuilder sb = new StringBuilder(str);
+        return str.equals(sb.reverse().toString());
+    }
+}
+
+----------------------------------------------------------------------
+Q6)Question 6: UDP Factorial (Java)
+
+import java.io.*;
+import java.net.*;
+
+public class UDPFactorial {
+    public static void main(String[] args) throws IOException {
+        DatagramSocket socket = new DatagramSocket();
+        
+        byte[] sendData = new byte[1024];
+        byte[] receiveData = new byte[1024];
+        
+        BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
+        
+        System.out.print("Enter a number: ");
+        int num = Integer.parseInt(inFromUser.readLine());
+        
+        sendData = String.valueOf(num).getBytes();
+        
+        InetAddress serverAddress = InetAddress.getByName("localhost");
+        
+        DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, serverAddress, 9999);
+        socket.send(sendPacket);
+        
+        DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+        socket.receive(receivePacket);
+        
+        String factorialStr = new String(receivePacket.getData()).trim();
+        System.out.println("Factorial of " + num + " is: " + factorialStr);
+        
+        socket.close();
+    }
+}
+-----------------------------------------------------------------------------------------
+Q8)Question 8: Network Topology using 5 Nodes, 2 Source Nodes, and 1 Destination in UDP (TCL)
+
+# Create a new simulation object
+set ns [new Simulator]
+
+# Create nodes
+set node(0) [$ns node]
+set node(1) [$ns node]
+set node(2) [$ns node]
+set node(3) [$ns node]
+set node(4) [$ns node]
+
+# Set up routing
+$ns rtproto DV
+
+# Define link characteristics
+$ns duplex-link $node(0) $node(1) 10Mb 10ms DropTail
+$ns duplex-link $node(1) $node(2) 10Mb 10ms DropTail
+$ns duplex-link $node(2) $node(3) 10Mb 10ms DropTail
+$ns duplex-link $node(3) $node(4) 10Mb 10ms DropTail
+
+# Create UDP agents and attach them to nodes
+set udp(0) [new Agent/UDP]
+set udp(1) [new Agent/UDP]
+$ns attach-agent $node(0) $udp(0)
+$ns attach-agent $node(4) $udp(1)
+
+# Create a CBR traffic source from node 0 to node 4
+set cbr [new Application/Traffic/CBR]
+$cbr attach-agent $udp(0)
+$cbr set packetSize_ 1000
+$cbr set rate_ 1Mb
+$cbr set random_ false
+
+# Define traffic and schedule events
+$ns connect $udp(0) $udp(1)
+$ns at 0.1 "$cbr start"
+$ns at 120.0 "$cbr stop"
+
+# Define termination time and run simulation
+$ns at 120.0 "finish"
+proc finish {} {
+    global ns
+    $ns halt
+    $ns namtrace-all-wireless out.nam
+    exec nam out.nam &
+    exit 0
+}
+
+$ns run
+-----------------------------------------------------------------------------
+Q9)Question 9: Simulation of Network-Specific Routing Protocol (Link State) with 5 Nodes, 1 Source, and 2 Destinations (TCL)
+
+# Create a new simulation object
+set ns [new Simulator]
+
+# Create nodes
+set node(0) [$ns node]
+set node(1) [$ns node]
+set node(2) [$ns node]
+set node(3) [$ns node]
+set node(4) [$ns node]
+
+# Set up routing
+$ns rtproto LS
+
+# Define link characteristics
+$ns duplex-link $node(0) $node(1) 10Mb 10ms DropTail
+$ns duplex-link $node(1) $node(2) 10Mb 10ms DropTail
+$ns duplex-link $node(1) $node(3) 10Mb 10ms DropTail
+$ns duplex-link $node(2) $node(4) 10Mb 10ms DropTail
+$ns duplex-link $node(3) $node(4) 10Mb 10ms DropTail
+
+# Schedule events for node movement
+for {set i 0} {$i < 5} {incr i} {
+    $ns at [expr {$i * 0.1}] "$node($i) setdest [expr {20.0 + ($i * 10.0)}] [expr {30.0 + ($i * 10.0)}] 10.0"
+}
+
+# Create TCP agents and attach them to nodes
+set tcp [new Agent/TCP]
+$ns attach-agent $node(0) $tcp
+
+# Define traffic and schedule events
+set cbr [new Application/Traffic/CBR]
+$cbr attach-agent $tcp
+$cbr set packetSize_ 1000
+$cbr set rate_ 1Mb
+$cbr set random_ false
+
+$ns connect $tcp $node(4)
+$ns at 0.1 "$cbr start"
+$ns at 120.0 "$cbr stop"
+
+# Define termination time and run simulation
+$ns at 120.0 "finish"
+proc finish {} {
+    global ns
+    $ns halt
+    $ns namtrace-all-wireless out.nam
+    exec nam out.nam &
+    exit 0
+}
+
+$ns run
+-----------------------------------------------------------------------------------------------
+Q10)Question 10: Basic Networking Commands (TCL)
+
+# Execute ifconfig command
+exec ifconfig
+
+# Execute nslookup command
+exec nslookup google.com
+
+# Execute dig command
+exec dig google.com
+-------------------------------------------------------------------------------------------------
+Q11)Question 11: Simulation of Network-Specific Routing Protocol (Distance Vector) with 5 Nodes, 1 Source, and 2 Destinations (TCL)
+
+# Create a new simulation object
+set ns [new Simulator]
+
+# Create nodes
+set node(0) [$ns node]
+set node(1) [$ns node]
+set node(2) [$ns node]
+set node(3) [$ns node]
+set node(4) [$ns node]
+
+# Set up routing
+$ns rtproto DV
+
+# Define link characteristics
+$ns duplex-link $node(0) $node(1) 10Mb 10ms DropTail
+$ns duplex-link $node(1) $node(2) 10Mb 10ms DropTail
+$ns duplex-link $node(1) $node(3) 10Mb 10ms DropTail
+$ns duplex-link $node(2) $node(4) 10Mb 10ms DropTail
+$ns duplex-link $node(3) $node(4) 10Mb 10ms DropTail
+
+# Schedule events for node movement
+for {set i 0} {$i < 5} {incr i} {
+    $ns at [expr {$i * 0.1}] "$node($i) setdest [expr {20.0 + ($i * 10.0)}] [expr {30.0 + ($i * 10.0)}] 10.0"
+}
+
+# Create TCP agents and attach them to nodes
+set tcp [new Agent/TCP]
+$ns attach-agent $node(0) $tcp
+
+# Define traffic and schedule events
+set cbr [new Application/Traffic/CBR]
+$cbr attach-agent $tcp
+$cbr set packetSize_ 1000
+$cbr set rate_ 1Mb
+$cbr set random_ false
+
+$ns connect $tcp $node(4)
+$ns at 0.1 "$cbr start"
+$ns at 120.0 "$cbr stop"
+
+# Define termination time and run simulation
+$ns at 120.0 "finish"
+proc finish {} {
+    global ns
+    $ns halt
+    $ns namtrace-all-wireless out.nam
+    exec nam out.nam &
+    exit 0
+}
+
+$ns run
+------------------------------------------------------------------------------------------------------------
+Q12)Question 12: TCP Socket Factorial (Java)
+
+import java.io.*;
+import java.net.*;
+
+public class TCPSocketFactorial {
+    public static void main(String[] args) throws IOException {
+        Socket socket = new Socket("localhost", 9999);
+        
+        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+        
+        int num = 5; // Example number for factorial calculation
+        
+        out.println(num);
+        
+        String factorialStr = in.readLine();
+        int factorial = Integer.parseInt(factorialStr);
+        
+        System.out.println("Factorial of " + num + " is: " + factorial);
+        
+        socket.close();
+    }
+}
+----------------------------------------------------------------------------------------------------------------
+Q13)Question 13: TCP Socket Maximum Number in Array (Java)
+import java.io.*;
+import java.net.*;
+
+public class TCPSocketMaxNum {
+    public static void main(String[] args) throws IOException {
+        int[] numbers = {5, 10, 3, 7, 2};
+
+        Socket socket = new Socket("localhost", 9999);
+        ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
+        outputStream.writeObject(numbers);
+
+        ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
+        int maxNumber = inputStream.readInt();
+
+        System.out.println("Maximum number in the array: " + maxNumber);
+
+        socket.close();
+    }
+}
+-------------------------------------------------------------------------------------------------------------------
