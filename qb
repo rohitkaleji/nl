@@ -407,3 +407,111 @@ public class TCPSocketMaxNum {
     }
 }
 -------------------------------------------------------------------------------------------------------------------
+Q14)Distance vector (routing protocol) by using for loop in java
+
+import java.util.Arrays;
+
+public class DistanceVectorRouting {
+
+    public static void main(String[] args) {
+        int[][] distanceMatrix = {
+            {0, 2, 5, Integer.MAX_VALUE, Integer.MAX_VALUE},
+            {2, 0, 3, 4, Integer.MAX_VALUE},
+            {5, 3, 0, 1, 4},
+            {Integer.MAX_VALUE, 4, 1, 0, 2},
+            {Integer.MAX_VALUE, Integer.MAX_VALUE, 4, 2, 0}
+        };
+
+        int numNodes = distanceMatrix.length;
+
+        for (int node = 0; node < numNodes; node++) {
+            System.out.println("Routing table for Node " + node + ":");
+            System.out.println("-------------------------");
+
+            // Initialize distance vector for the current node
+            int[] distanceVector = Arrays.copyOf(distanceMatrix[node], numNodes);
+
+            for (int dest = 0; dest < numNodes; dest++) {
+                if (dest == node) {
+                    continue; // Skip current node
+                }
+
+                // Update distance vector using distance vector algorithm
+                for (int via = 0; via < numNodes; via++) {
+                    if (via == node || via == dest) {
+                        continue; // Skip current and destination nodes
+                    }
+
+                    int newDistance = distanceMatrix[node][via] + distanceMatrix[via][dest];
+                    if (newDistance < distanceVector[dest]) {
+                        distanceVector[dest] = newDistance;
+                    }
+                }
+            }
+
+            // Display routing table for the current node
+            for (int dest = 0; dest < numNodes; dest++) {
+                if (dest != node) {
+                    System.out.println("To Node " + dest + ": " + distanceVector[dest]);
+                }
+            }
+
+            System.out.println();
+        }
+    }
+}
+---------------------------------------------------------------------------------------
+Q15)network topology using a for loop in Java:
+
+import java.util.ArrayList;
+
+public class NetworkTopology {
+
+    public static void main(String[] args) {
+        int numNodes = 5;
+        ArrayList<Node> nodes = new ArrayList<>();
+
+        // Create nodes
+        for (int i = 0; i < numNodes; i++) {
+            nodes.add(new Node(i));
+        }
+
+        // Connect nodes
+        for (int i = 0; i < numNodes - 1; i++) {
+            nodes.get(i).connect(nodes.get(i + 1));
+        }
+
+        // Display connections
+        for (Node node : nodes) {
+            System.out.println("Node " + node.getId() + " is connected to:");
+            for (Node neighbor : node.getNeighbors()) {
+                System.out.println("    Node " + neighbor.getId());
+            }
+            System.out.println();
+        }
+    }
+
+    static class Node {
+        private int id;
+        private ArrayList<Node> neighbors;
+
+        public Node(int id) {
+            this.id = id;
+            this.neighbors = new ArrayList<>();
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public ArrayList<Node> getNeighbors() {
+            return neighbors;
+        }
+
+        public void connect(Node node) {
+            neighbors.add(node);
+            node.getNeighbors().add(this);
+        }
+    }
+}
+---------------------------------------------------------------------------------------------------
